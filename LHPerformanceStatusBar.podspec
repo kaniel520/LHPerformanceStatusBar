@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'LHPerformanceStatusBar'
-  s.version          = '0.1.0'
+  s.version          = '1.0.0'
   s.summary          = 'Add FPS,CPU and Memory to your status bar'
   s.description      = <<-DESC
 This is a library to create a new status bar with realtime FPS,CPU and memory information.
