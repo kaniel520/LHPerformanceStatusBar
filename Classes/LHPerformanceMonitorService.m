@@ -57,7 +57,11 @@
         _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(envokeDisplayLink:)];
         _displayLink.paused = YES;
         [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-        _fpsStatusBar = [[LHPerformanceStatusBar alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 20.0)];
+        // 屏幕安全区
+        UIEdgeInsets safeArea = [self safeAreaInsets];
+        // 状态栏高度
+        CGFloat statusBarHeight = safeArea.top == 0 ? 20 : safeArea.top;
+        _fpsStatusBar = [[LHPerformanceStatusBar alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, statusBarHeight + 20.0)];
         //Notification
         [[NSNotificationCenter defaultCenter] addObserver: self
                                                  selector: @selector(applicationDidBecomeActiveNotification)
@@ -78,6 +82,16 @@
 - (void)dealloc{
     _displayLink.paused = YES;
     [_displayLink removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+}
+
+/// 设备安全区
+-(UIEdgeInsets)safeAreaInsets {
+    if (@available(iOS 11.0, *)) {
+        return [[[UIApplication sharedApplication] keyWindow] safeAreaInsets];
+    } else {
+        // Fallback on earlier versions
+    }
+    return UIEdgeInsetsZero;
 }
 
 #pragma mark - Private
