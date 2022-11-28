@@ -12,8 +12,9 @@
 @implementation LHPerformanceUtil
 
 + (CGFloat)usedMemoryInMB{
-    vm_size_t memory = usedMemory();
-    return memory / 1000.0 / 1000.0;
+    return [self useMemoryForApp];
+//    vm_size_t memory = usedMemory();
+//    return memory / 1000.0 / 1000.0;
 }
 
 + (CGFloat)cpuUsage{
@@ -25,6 +26,19 @@ vm_size_t usedMemory(void) {
     mach_msg_type_number_t size = sizeof(info);
     kern_return_t kerr = task_info(mach_task_self(), TASK_BASIC_INFO, (task_info_t)&info, &size);
     return (kerr == KERN_SUCCESS) ? info.resident_size : 0; // size in bytes
+}
+
+// 当前 app 内存使用量
++ (CGFloat)useMemoryForApp {
+    task_vm_info_data_t vmInfo;
+    mach_msg_type_number_t count = TASK_VM_INFO_COUNT;
+    kern_return_t kernelReturn = task_info(mach_task_self(), TASK_VM_INFO, (task_info_t) &vmInfo, &count);
+    if (kernelReturn == KERN_SUCCESS) {
+        int64_t memoryUsageInByte = (int64_t) vmInfo.phys_footprint;
+        return memoryUsageInByte / 1024 / 1024.0;
+    } else {
+        return -1;
+    }
 }
 
 float cpu_usage()
